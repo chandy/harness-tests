@@ -1,0 +1,65 @@
+{
+  "name": "coding-agent-tools",
+  "version": "1.0.0",
+  "description": "Language-neutral tool surface shared by all harnesses. Paths are relative to the sandbox workspace root.",
+  "tools": [
+    {
+      "name": "list_files",
+      "description": "List files and directories under a relative path (default: workspace root).",
+      "parameters": {
+        "path": {
+          "type": "string",
+          "default": ".",
+          "description": "Relative directory path to list."
+        }
+      }
+    },
+    {
+      "name": "read_file",
+      "description": "Read a UTF-8 text file from the workspace.",
+      "parameters": {
+        "path": {
+          "type": "string",
+          "description": "Relative file path to read."
+        }
+      }
+    },
+    {
+      "name": "write_file",
+      "description": "Create or overwrite a UTF-8 text file in the workspace.",
+      "parameters": {
+        "path": {
+          "type": "string",
+          "description": "Relative file path to write."
+        },
+        "content": {
+          "type": "string",
+          "description": "Full new file contents."
+        }
+      }
+    },
+    {
+      "name": "edit_file",
+      "description": "Replace the first occurrence of old_str with new_str in a file. Fails if old_str is missing or not unique.",
+      "parameters": {
+        "path": {
+          "type": "string",
+          "description": "Relative file path to edit."
+        },
+        "old_str": {
+          "type": "string",
+          "description": "Exact text to find (must appear exactly once)."
+        },
+        "new_str": {
+          "type": "string",
+          "description": "Replacement text."
+        }
+      }
+    },
+    {
+      "name": "run_tests",
+      "description": "Run the workspace test suite (python -m pytest -q). Use this to check whether the task is solved.",
+      "parameters": {}
+    }
+  ]
+}

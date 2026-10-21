@@ -1,0 +1,16 @@
+{
+  "steps": [
+    {"tool": "list_files", "args": {"path": "."}},
+    {"tool": "read_file", "args": {"path": "src/leaderboard.py"}},
+    {
+      "tool": "edit_file",
+      "args": {
+        "path": "src/leaderboard.py",
+        "old_str": "ranked = sorted(players, key=lambda p: p[\"name\"])",
+        "new_str": "ranked = sorted(players, key=lambda p: p[\"score\"])"
+      }
+    },
+    {"tool": "run_tests", "args": {}},
+    {"done": "Sorted players by score instead of name."}
+  ]
+}
