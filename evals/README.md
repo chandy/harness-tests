@@ -7,7 +7,7 @@ One runner, three harnesses, shared tasks.
 uv run harness-evals --model fake
 
 # subset
-uv run harness-evals --harnesses pydantic-ai,pi-durable --tasks 01-fix-typo,02-off-by-one
+uv run harness-evals --harnesses pydantic-ai-harness,pi-durable --tasks 01-fix-typo,02-off-by-one
 ```
 
 Each run:

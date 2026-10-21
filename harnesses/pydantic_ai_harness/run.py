@@ -3,14 +3,14 @@ from __future__ import annotations
 from shared.paths import CONTEXT_DIR
 
 from harnesses.cli_common import build_parser, emit_result, resolved_mode
-from harnesses.pydantic_ai.agent import run_pydantic_ai
+from harnesses.pydantic_ai_harness.agent import run_pydantic_ai_harness
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = build_parser("pydantic-ai")
+    parser = build_parser("pydantic-ai-harness")
     args = parser.parse_args(argv)
     mode = resolved_mode(args)
-    result = run_pydantic_ai(
+    result = run_pydantic_ai_harness(
         workspace=args.workspace.resolve(),
         issue_path=args.issue.resolve(),
         task_dir=args.task_dir.resolve(),

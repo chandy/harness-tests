@@ -11,6 +11,7 @@ dependencies = [
     "langchain-openai>=0.3.0",
     "langchain-anthropic>=0.3.0",
     "pytest>=8.0",
+    "pydantic-ai-harness>=0.59.0",
 ]
 
 [project.optional-dependencies]
@@ -19,7 +20,7 @@ dev = ["pytest>=8.0"]
 [project.scripts]
 harness-evals = "evals.run:main"
 harness-deepagents = "harnesses.deepagents.run:main"
-harness-pydantic-ai = "harnesses.pydantic_ai.run:main"
+harness-pydantic-ai-harness = "harnesses.pydantic_ai_harness.run:main"
 
 [build-system]
 requires = ["hatchling"]

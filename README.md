@@ -7,7 +7,7 @@ A long-lived learning repo for comparing **agent harnesses** on the same coding-
 | Harness | Language | Package | Superpower |
 |---------|----------|---------|------------|
 | [Deep Agents](harnesses/deepagents/) | Python | `deepagents` | Planning / subagents / context middleware |
-| [Pydantic AI](harnesses/pydantic_ai/) | Python | `pydantic-ai` | Typed tools + clean deps |
+| [Pydantic AI Harness](harnesses/pydantic_ai_harness/) | Python | `pydantic-ai-harness` | Capabilities + `Coder` + sandboxes / durable exec |
 | [pi-durable](harnesses/pi-durable/) | TypeScript | `@earendil-works/pi-durable` | Durable crash-resume ([blog](https://earendil.com/posts/pi-durable/)) |
 
 The example agent is small on purpose: given a tiny fixture repo + an issue, it **reads → edits → runs tests → iterates** until green (or gives up).
@@ -24,7 +24,7 @@ flowchart TB
 
   subgraph harnesses [Harness adapters]
     DA[deepagents]
-    PA[pydantic-ai]
+    PA[pydantic-ai-harness]
     PI[pi-durable]
   end
 
@@ -34,7 +34,8 @@ flowchart TB
   end
 
   CTX --> DA & PA & PI
-  TOOLS --> DA & PA & PI
+  TOOLS -->|"mapped / reimplemented"| DA & PI
+  CTX --> PA
   TASKS --> RUN
   DA & PA & PI --> RUN
   RUN --> OUT
@@ -74,7 +75,7 @@ Artifacts land in `evals/output/results.md` and `results.json`.
 
 ```bash
 # Python harnesses
-uv run harness-pydantic-ai --help
+uv run harness-pydantic-ai-harness --help
 uv run harness-deepagents --help
 
 # TypeScript harness
@@ -91,12 +92,17 @@ uv run harness-evals --model openai
 # optional: HARNESS_OPENAI_MODEL=gpt-4o-mini
 ```
 
-Without keys, mode defaults to **fake**. Fake mode replays each task's `fake_plan.json` through the shared tools so CI is deterministic.
+Without keys, mode defaults to **fake**.
+
+- **deepagents / pi-durable:** replay `fake_plan.json` via the shared tool implementations.
+- **pydantic-ai-harness:** replay the same plans through **`FunctionModel` on the real `Coder` loop** (translating `run_tests` → `shell`, `old_str`/`new_str` → `old_text`/`new_text`).
 
 ## Shared contract
 
 - **Tools** — `shared/tool_contract.json` (`list_files`, `read_file`, `write_file`, `edit_file`, `run_tests`)
-- **Context** — `context/SYSTEM.md` + `context/AGENTS.md` loaded by every harness
+  - Deep Agents + pi-durable implement this contract directly.
+  - Pydantic AI Harness uses **Coder’s built-in tools** and maps the contract in [harnesses/pydantic_ai_harness/README.md](harnesses/pydantic_ai_harness/README.md).
+- **Context** — `context/SYSTEM.md` + `context/AGENTS.md` loaded by every harness (Coder gets them as `instructions=`)
 - **Tasks** — `tasks/<id>/{issue.md,fixture/,fake_plan.json,task.json}`
 
 ## CI
@@ -110,17 +116,17 @@ GitHub Actions runs `uv sync`, `pnpm install`, and `harness-evals --model fake` 
 - Deploy the pi-durable agent to **Cloudflare Workers** with durable storage.
 - Code-improvement loop: keep a leaderboard of harness×model×prompt commits.
 - Wire real token/cost accounting from each provider into `AgentResult`.
-- Optional: native fake models inside each harness (`HARNESS_DEEPAGENTS_NATIVE_FAKE=1`, `HARNESS_PYDANTIC_FUNCTION_MODEL=1`) to exercise framework loops without shared short-circuiting.
+- Optional: drive Deep Agents fake mode through a plan-replaying chat model (`HARNESS_DEEPAGENTS_NATIVE_FAKE=1`) the way pydantic-ai-harness already does with `FunctionModel`.
 
 ## Layout
 
 ```
-context/                 # shared system prompt + AGENTS.md
-tasks/                   # benchmark tasks
-shared/                  # tool contract, WorkspaceTools, fake agent, results
-harnesses/deepagents/    # LangChain Deep Agents adapter
-harnesses/pydantic_ai/   # Pydantic AI adapter (underscore = importable package)
-harnesses/pi-durable/    # pi-durable TypeScript adapter
-evals/                   # cross-harness runner + reports
+context/                      # shared system prompt + AGENTS.md
+tasks/                        # benchmark tasks
+shared/                       # tool contract, WorkspaceTools, fake agent, results
+harnesses/deepagents/         # LangChain Deep Agents adapter
+harnesses/pydantic_ai_harness/# Pydantic AI Harness (Coder + LocalWorkspace)
+harnesses/pi-durable/         # pi-durable TypeScript adapter
+evals/                        # cross-harness runner + reports
 .github/workflows/ci.yml
 ```
