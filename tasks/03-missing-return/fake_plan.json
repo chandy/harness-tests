@@ -1,0 +1,16 @@
+{
+  "steps": [
+    {"tool": "list_files", "args": {"path": "."}},
+    {"tool": "read_file", "args": {"path": "src/mathy.py"}},
+    {
+      "tool": "edit_file",
+      "args": {
+        "path": "src/mathy.py",
+        "old_str": "    result = 2 * x\n",
+        "new_str": "    result = 2 * x\n    return result\n"
+      }
+    },
+    {"tool": "run_tests", "args": {}},
+    {"done": "Added missing return in double()."}
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "steps": [
+    {"tool": "list_files", "args": {"path": "."}},
+    {"tool": "read_file", "args": {"path": "src/geometry.py"}},
+    {
+      "tool": "edit_file",
+      "args": {
+        "path": "src/geometry.py",
+        "old_str": "return width + height",
+        "new_str": "return width * height"
+      }
+    },
+    {"tool": "run_tests", "args": {}},
+    {"done": "Changed + to * in area()."}
+  ]
+}
