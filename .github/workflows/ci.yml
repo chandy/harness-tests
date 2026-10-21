@@ -37,6 +37,9 @@ jobs:
         working-directory: harnesses/pi-durable
 
       - name: Run evals (fake model)
+        env:
+          PYDANTIC_AI_NO_BANNER: "1"
+          HARNESS_MODEL: fake
         run: uv run harness-evals --model fake --out evals/output
 
       - name: Upload results

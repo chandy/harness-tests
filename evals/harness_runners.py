@@ -12,7 +12,7 @@ from shared.paths import CONTEXT_DIR, REPO_ROOT
 from shared.results import AgentResult
 
 
-HARNESSES = ("deepagents", "pydantic-ai", "pi-durable")
+HARNESSES = ("deepagents", "pydantic-ai-harness", "pi-durable")
 
 
 def run_harness(
@@ -32,10 +32,10 @@ def run_harness(
             model=model,
             max_steps=max_steps,
         )
-    if harness == "pydantic-ai":
+    if harness == "pydantic-ai-harness":
         return _run_python_module(
-            "harnesses.pydantic_ai.run",
-            harness_label="pydantic-ai",
+            "harnesses.pydantic_ai_harness.run",
+            harness_label="pydantic-ai-harness",
             task=task,
             workspace=workspace,
             model=model,
